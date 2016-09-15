@@ -76,6 +76,7 @@ type Task struct {
 	StagedAt           *time.Time
 	Version            time.Time
 	SlaveId            string
+	State              *TaskStatus
 	AppId              string
 	HealthCheckResults []HealthCheckResult
 }
