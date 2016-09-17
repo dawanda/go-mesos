@@ -11,6 +11,8 @@ type PortMapping struct {
 	HostPort      uint
 	ServicePort   uint
 	Protocol      string
+	Name          string
+	Labels        map[string]string
 }
 
 type KeyValuePair struct {
@@ -30,6 +32,17 @@ type DockerContainer struct {
 	Privileged     bool
 	Parameters     []KeyValuePair
 	ForcePullImage bool
+}
+
+type ReadinessCheck struct {
+	Name                    string
+	Protocol                string
+	Path                    string
+	PortName                string
+	IntervalSeconds         uint
+	TimeoutSeconds          uint
+	HttpStatusCodesForReady []uint
+	PreserveLastResponse    bool
 }
 
 type HealthCheck struct {
@@ -107,6 +120,7 @@ type App struct {
 	Cpus                  float64
 	Mem                   uint
 	Disk                  uint
+	Gpus                  uint
 	Executor              string
 	Constraints           [][]string
 	Uris                  []string
@@ -119,10 +133,27 @@ type App struct {
 	MaxLaunchDelaySeconds uint
 	Container             AppContainer
 	HealthChecks          []HealthCheck
-	// TODO Dependencies []
-	UpgradeStrategy UpgradeStrategy
-	Labels          map[string]string
-	Tasks           []Task
+	RedinessChecks        []ReadinessCheck
+	Dependencies          *[]string
+	UpgradeStrategy       UpgradeStrategy
+	Labels                map[string]string
+	Tasks                 []Task
+	AcceptedResourceRoles *[]string
+	IpAddress             *IpAddr
+	Version               time.Time
+	Residency             Residency
+	// "Secrets": {},
+	TaskKillGracePeriodSeconds *uint
+	VersionInfo                VersionInfo
+}
+
+type Residency struct {
+	TaskLostBehavior string
+}
+
+type VersionInfo struct {
+	LastScalingAt      time.Time
+	LastConfigChangeAt time.Time
 }
 
 func (app *App) GetTaskById(taskId string) *Task {
