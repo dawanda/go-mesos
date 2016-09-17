@@ -45,10 +45,15 @@ type ReadinessCheck struct {
 	PreserveLastResponse    bool
 }
 
+type Command struct {
+	Value string
+}
+
 type HealthCheck struct {
 	Protocol               string
 	Path                   string
 	PortIndex              int
+	Command                *Command
 	GracePeriodSeconds     uint
 	IntervalSeconds        uint
 	TimeoutSeconds         uint
