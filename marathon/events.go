@@ -99,6 +99,6 @@ type DeploymentStep struct {
 }
 
 type DeploymentAction struct {
-	Type string `json:"type"`
-	App  string `json:"app"`
+	Action string `json:"action"`
+	App    string `json:"app"`
 }
