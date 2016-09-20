@@ -51,7 +51,7 @@ type StatusUpdateEvent struct {
 	AppId       string
 	Host        string
 	IpAddresses []IpAddr
-	Ports       []int
+	Ports       []uint
 	Version     string
 }
 
