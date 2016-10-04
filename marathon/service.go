@@ -2,11 +2,13 @@ package marathon
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"net"
 	"net/http"
+	"strings"
 )
 
 type Service struct {
@@ -20,6 +22,10 @@ func NewService(host net.IP, port uint) (*Service, error) {
 	return ms, nil
 }
 
+type errorMessage struct {
+	message string
+}
+
 func (service *Service) HttpGet(path string) ([]byte, error) {
 	url := service.BaseURL + path
 	response, err := http.Get(url)
@@ -29,7 +35,26 @@ func (service *Service) HttpGet(path string) ([]byte, error) {
 
 	defer response.Body.Close()
 	output, err := ioutil.ReadAll(response.Body)
-	return output, err
+	if err != nil {
+		return nil, err
+	}
+
+	if response.StatusCode != 200 {
+		contentType := response.Header.Get("Content-Type")
+		// Marathon returns: Content-Type: "application/json; q=2"
+		if strings.Contains(contentType, "application/json") {
+			// return the HTTP response body as error message
+			return nil, errors.New(string(output))
+		}
+		var em errorMessage
+		err = json.Unmarshal(output, &em)
+		if err != nil {
+			return nil, errors.New(string(output))
+		}
+		return nil, errors.New(em.message)
+	}
+
+	return output, nil
 }
 
 func (service *Service) HttpPost(path string, body io.Reader) ([]byte, error) {
