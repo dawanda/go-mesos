@@ -78,6 +78,12 @@ type DeploymentFailedEvent struct {
 	Timestamp time.Time      `json:"timestamp"`
 }
 
+type AppTerminatedEvent struct {
+	AppId     string    `json:"appId"`
+	EventType string    `json:"eventType"`
+	Timestamp time.Time `json:"timestamp"`
+}
+
 type DeploymentPlan struct {
 	Id       string           `json:"id"`
 	Original DeploymentTarget `json:"original"`
